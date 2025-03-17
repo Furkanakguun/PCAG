@@ -14,7 +14,7 @@ title='Distance vs Time Graph')
 
 ax.grid(True, linestyle='-.')
 ax.tick_params(labelcolor='r', \
-               
+
 labelsize='medium', \
 width=3)
 
