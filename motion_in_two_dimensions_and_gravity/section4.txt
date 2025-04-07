@@ -1,0 +1,35 @@
+1. Numerical Representation of Vectors
+2. Vectors in NumPy
+
+We can instantiate a vector with np.array([x, y, z]).
+
+Vector addition a + b and scalar multiplication 3 * a happen componentwise.
+
+Watch out for “broadcasting,” where adding a scalar to a vector adds that scalar to each component (e.g., a + 3 gives [a_x+3, a_y+3, a_z+3]).
+
+a = np.array([1,2,0])
+b = np.array([2,-4,0])
+c = a + b        # -> [3, -2, 0]
+d = 3*a          # -> [3, 6, 0]
+e = a + 3        # -> [4, 5, 3]
+
+np.dot(a, b) returns the scalar dot product 𝑎 ⋅ 𝑏
+
+3. Time Sequences of Vectors
+In simulations, you often track position or force over discrete time steps.
+
+You can store these as a 2D array r, where r[i,:] is the 𝑖th time’s
+[ 𝑥 , 𝑦 , 𝑧 ]  position.
+
+4. Position, Velocity, and Acceleration in 2D
+5. Sample Code: Soccer Ball Trajectory
+6. Gravity and Free Fall
+7. Numerical Integration: Euler Method
+8. Introduction to Forces
+Conclusion
+This stage expands 2D motion knowledge: you go from basic vector math and discrete
+updates in 1D to describing position, velocity, and acceleration as vectors in 2D (or 3D).
+We see how to implement this mathematically (symbolically via Sympy or numerically via Euler’s method)
+and physically (using Newton’s laws and free-body diagrams).
+By combining these steps—vector math, reading data, plotting with quivers, and simple gravity models
+we can simulate projectile motion, orbits, or collisions under gravitational forces.
