@@ -8,6 +8,7 @@ WHITE = (255, 255, 255)
 
 SCREEN_WIDTH = 700
 SCREEN_HEIGHT = 500
+BALL_SIZE = 25
 
 
 class Ball:
@@ -43,6 +44,53 @@ def make_ball():
     ball.change_y = random.randrange(-2, 3)
 
     return ball
+
+
+def raycast_collision(ball1, ball2, dt):
+    """
+    Uses a ray-casting approach to detect a collision between two balls
+    during the time step dt. If a collision occurs, calculates the impact time.
+    Returns True if collision happens, False otherwise, along with collision angle
+    and point of collision (even if None in case of no collision).
+    """
+    # Relative position and velocity (ball1 relative to ball2)
+    rx = ball1.x - ball2.x
+    ry = ball1.y - ball2.y
+    vx = ball1.change_x - ball2.change_x
+    vy = ball1.change_y - ball2.change_y
+    R_eff = ball1.mass + ball2.mass  # Effective radius for collision detection
+
+    A = vx * vx + vy * vy
+    B = 2 * (rx * vx + ry * vy)
+    C = rx * rx + ry * ry - R_eff * R_eff  # Distance squared minus radii squared
+
+    # Discriminant check for real roots (collision)
+    discriminant = B * B - 4 * A * C
+    if A == 0 or discriminant < 0:
+        return False, None, None, None, None
+
+    sqrt_disc = math.sqrt(discriminant)
+    t1 = (-B - sqrt_disc) / (2 * A)
+    t2 = (-B + sqrt_disc) / (2 * A)
+
+    t_hit = None
+    if 0 < t1 <= dt:
+        t_hit = t1
+    elif 0 < t2 <= dt:
+        t_hit = t2
+
+    if t_hit is None:
+        return False, None, None, None, None
+
+    # Collision point is computed along ball1's path
+    collision_x = (ball1.x + ball1.change_x * t_hit)
+    collision_y = (ball1.y + ball1.change_y * t_hit)
+
+    # Calculate collision angle (direction of the collision vector)
+    collision_angle = math.atan2(ry, rx)
+
+    # Return True for collision and the calculated values
+    return True, t_hit, collision_angle, collision_x, collision_y
 
 
 def normal_collision_detection(ball1, ball2):
@@ -101,7 +149,7 @@ def main():
     size = [SCREEN_WIDTH, SCREEN_HEIGHT]
     screen = pygame.display.set_mode(size)
 
-    pygame.display.set_caption("Ball Collision with Normal Detection")
+    pygame.display.set_caption("Ball Collision with Normal Detection & Raycasting")
 
     # Loop until the user clicks the close button.
     done = False
@@ -114,6 +162,8 @@ def main():
     ball = make_ball()
     ball_list.append(ball)
 
+    use_ray_casting = False  # Set this flag to switch between ray-casting and normal detection
+
     # -------- Main Program Loop -----------
     while not done:
         # --- Event Processing
@@ -124,6 +174,9 @@ def main():
                 if event.key == pygame.K_SPACE:
                     ball = make_ball()
                     ball_list.append(ball)
+                elif event.key == pygame.K_r:
+                    use_ray_casting = not use_ray_casting  # Toggle between collision methods
+                    print("Using to ray casting ? " + str(use_ray_casting))
 
         # --- Logic
         for ball in ball_list:
@@ -137,16 +190,20 @@ def main():
             if ball.x > SCREEN_WIDTH - ball.radius or ball.x < ball.radius:
                 ball.change_x *= -1
 
-        # --- Collision Detection with Normal Elastic Collision
+        # --- Collision Detection
+        dt = 1.0 / 60.0  # Time step, assuming 60 FPS
         for i in range(len(ball_list)):
             for j in range(i + 1, len(ball_list)):
                 b1 = ball_list[i]
                 b2 = ball_list[j]
 
-                # Normal collision detection method
-                collided, collision_angle, collision_x, collision_y = normal_collision_detection(b1, b2)
+                if use_ray_casting:
+                    collided, t_hit, collision_angle, collision_x, collision_y = raycast_collision(b1, b2, dt)
+                else:
+                    collided, collision_angle, collision_x, collision_y = normal_collision_detection(b1, b2)
 
                 if collided:
+                    print("Collided")
                     # Adjust ball positions to avoid overlap
                     overlap_distance = (b1.radius + b2.radius) - math.hypot(b1.x - b2.x, b1.y - b2.y)
                     b1.x -= overlap_distance * math.cos(collision_angle) / 2
