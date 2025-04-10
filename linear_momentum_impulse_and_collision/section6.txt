@@ -1,0 +1,9 @@
+1. Linear Momentum and Impulse
+
+What Is Linear Momentum?
+Definition:
+Linear momentum (p) is defined as the product of an object’s mass (m) and its velocity (v): p = m.v
+
+It is a vector quantity; that means it has both magnitude and direction.
+For example, consider a moving car: the heavier the car and the faster it goes,
+the more “oomph” (momentum) it has. This momentum tells us how difficult it is to stop the car.
