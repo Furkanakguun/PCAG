@@ -14,6 +14,7 @@ n = int(round(t/dt))
 t = np.zeros(n, float)
 y = np.zeros(n, float)
 v = np.zeros(n, float)
+
 # Initial values
 y[0] = 0.0
 v[0] = v0
