@@ -1,0 +1,38 @@
+1 Contact forces & the experimental spring law
+Key idea: whenever two solids press on each other we approximate the complicated micro-deformations with a single linear spring
+Fs = -kΔLn
+Here 𝑘 is one tunable constant that you measure or estimate from elasticity. That single law underlies collision response in games,
+shoe–floor contact in gait labs, or the bouncing note-pads on your phone.
+
+2 Simple Hanging-block example
+Free-body diagram: gravity 𝑚𝑔 downward, spring -ky j upward -> my = -ky -mg If we release the block from rest we get a second-order ODE.
+
+3 Mass–Spring–Damper (MSD) model.
+
+4 External forcing & resonance.
+
+5 Viscoelastic materials & three classic analogues.
+
+6 Numerical integration choices.
+    Euler (RK1) – one slope sample; cheapest but can gain energy ⇒ bouncing balls go berserk.
+
+    Mid-point / RK2 – two samples; decent for UI widgets.
+
+    RK4 – four samples; the work-horse for serious offline sims.
+
+    SciPy solve_ivp (slide 35 ff.) – lets you swap methods ('RK45', 'BDF', 'Radau' …) with one keyword.
+
+    The sequence of hand-drawn triangles  is the geometric intuition behind RK4: four weighted slopes approximating the true curve over Δt.
+
+Summary cheat-sheet
+Contact = spring (+ damper) — one scalar 𝑘 (and 𝑐) capture complex deformation.
+
+MSD equation → classify with ζ; under- / critical- / over- damped.
+
+Forced response shows resonance; damping flattens peak.
+
+Viscoelastic analogues (Kelvin–Voigt, Maxwell, SLS) extend the spring idea to time-dependent materials.
+
+Integrator choice balances speed vs. stability; RK4 or SciPy for accuracy, Euler for real-time prototypes.
+
+Use these patterns whenever you need springs: rag-dolls, cloth, camera shakes, biomech research, or even a humble UI “bounce” effect.
