@@ -1,0 +1,97 @@
+Multi Body Dynamics with Control
+
+1. What is a Multibody System?
+
+A multibody system is the study of the dynamic behavior of interconnected rigid or flexible bodies. These bodies may undergo large translational and rotational displacements.
+Originated from Newton (free particle) and Euler (rigid body) mechanics.
+Advanced formulations include Lagrangian and constraint-based dynamics.
+
+2. Application Areas
+
+Multibody dynamics is applied in:
+Aerospace engineering
+Biomechanics
+Combustion engines, gears, chain/belt drives
+Robotics
+Physics engines and game development
+Military simulations, granular and molecular systems
+
+3. Core Concepts
+
+A rigid body has 6 degrees of freedom (3 translational + 3 rotational).
+A flexible body can deform under motion.
+A link connects two bodies or a body to ground, defined by kinematic constraints.
+Degrees of Freedom (DoF): Minimum number of independent variables needed to describe motion.
+Constraints: Limit relative motion between bodies.
+
+4. Equations and Formulations
+
+Newton-Euler: Direct application of forces on each body (can be tedious).
+Lagrangian dynamics: Based on energy formulations.
+D’Alembert’s Principle: Uses inertial forces in equilibrium equations.
+Kane’s Method: A simplified approach using vector projections to derive scalar equations.
+
+5. Types of Constraints
+
+Holonomic: Position-based and integrable.
+Non-holonomic: Velocity-based and non-integrable (e.g., rolling without slipping).
+Rheonomic: Time-dependent constraints.
+Examples: distance constraints, velocity constraints, contact constraints
+
+6. Physics Engines & Constraint Solvers
+
+Two main phases:
+Collision detection
+Constraint solving
+Use time stepping to discretize motion and solve equations iteratively.
+For large systems, LCP (Linear Complementarity Problems) are solved using methods like Projected Gauss-Seidel (PGS).
+
+7. Joints and Mechanisms
+
+Common joint types:
+Ball and socket
+Hinge (revolute)
+Slider (prismatic)
+Universal
+2D mechanism DoF is computed using Kutzbach equation:
+
+DoF = 3(N - 1) - 2(LP) - HP
+
+Where:
+N = total number of links
+LP = number of lower pairs
+HP = number of higher pairs
+
+8. Simulation Tools
+
+Popular engines/libraries: Bullet, PhysX, Box2D, PyDy, Sympy
+Simulations can be coded in C++, Python, MATLAB
+Python examples include defining points, frames, particles, and applying Kane’s method with Sympy.
+
+9. Kane’s Method
+
+Sympy.physics.mechanics supports Kane’s formulation.
+Uses ReferenceFrame, Point, Particle, KanesMethod, and symbolic math to derive equations of motion.
+Suitable for chain systems like pendulums (double/triple pendulum examples are included).
+
+10. PID and PD Control
+
+PID controller compares a SetPoint (SP) and a Process Variable (PV) and adjusts output accordingly.
+
+Modes:
+P, PI (most common), PID, PD
+PD controllers are often used in servo motor applications.
+Inverted pendulum control is presented as a benchmark scenario.
+
+11. Advanced Control: MPC & GEKKO
+
+Model Predictive Control (MPC): Optimizes control over a prediction horizon.
+GEKKO (Python): For real-time optimization of differential-algebraic systems.
+Supports LP, QP, NLP, MILP, MINLP
+Solves optimal control problems for pendulum and similar models.
+
+12. Biomechanical Modeling and Human-Like Control
+
+Advanced controllers use biologically inspired actuators such as muscle-tendon units (MTUs).
+Examples: Stanford’s Atlas robot and studies on optimizing human-like locomotion.
+Contrasts between animation-driven characters vs real-time physics-based control.
