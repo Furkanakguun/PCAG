@@ -4,14 +4,22 @@ import pygame, random, math
 @author fakgun
 """
 
+
 # ────────────────────────── Constants ──────────────────────────
-SCREEN_WIDTH, SCREEN_HEIGHT = 700, 500
+SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600  # Update to match background image size
 BLACK = (0, 0, 0)
 CM_COLOR = (255, 0, 0)  # CM artı işareti
 TEXT_COLOR = (255, 150, 0)  # ortadaki momentum sayısı
+HOLE_COLOR = (255, 165, 0)  # Orange color for holes
 
 pygame.init()
 FONT = pygame.font.SysFont(None, 28)
+
+# ------------------- Holes' Positions and Radii -------------------
+HOLES = [
+    {"center": (70, 300), "radius": 40},  # Left hole
+    {"center": (730, 300), "radius": 40}  # Right hole
+]
 
 
 # ────────────────────────── Ball Class ─────────────────────────
@@ -27,7 +35,7 @@ class Ball:
         if self.radius > 40:
             self.color = (255, 0, 0)  # Red if radius > 40px
         else:
-            self.color = (0, 255, 0)  # Blue if radius <= 40px
+            self.color = (0, 0, 255)  # Blue if radius <= 40px
 
 
 # ––––– yeni top çakışmasız
@@ -99,10 +107,24 @@ def calculation_of_kinetic_energy(balls):
     return total_ke
 
 
+# -------------------- Hole Collision Check --------------------
+def check_hole_collision(ball):
+    """Checks if the ball is completely inside any of the holes."""
+    for hole in HOLES:
+        dx = ball.x - hole["center"][0]
+        dy = ball.y - hole["center"][1]
+        distance_to_hole_center = math.hypot(dx, dy)
+
+        # Check if the ball is completely inside the hole (not just touching it)
+        if distance_to_hole_center <= (hole["radius"] - ball.radius):
+            return True  # Ball is completely inside the hole
+    return False  # No collision with holes
+
+
 # ───────────────────── Main Loop ─────────────────────
 def main():
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
-    pygame.display.set_caption("Total |p| and KE display")
+    pygame.display.set_caption("Total |p| and KE display with Holes")
     clock = pygame.time.Clock()
 
     balls = [make_ball([])]
@@ -123,6 +145,10 @@ def main():
             if b.x < b.radius or b.x > SCREEN_WIDTH - b.radius: b.change_x *= -1
             if b.y < b.radius or b.y > SCREEN_HEIGHT - b.radius: b.change_y *= -1
 
+            # Check if the ball hits any hole
+            if check_hole_collision(b):
+                balls.remove(b)  # Remove the ball if it goes completely into the hole
+
         # — Pairwise collisions —
         for i in range(len(balls)):
             for j in range(i + 1, len(balls)):
@@ -142,11 +168,18 @@ def main():
 
         # — Draw —
         screen.fill(BLACK)
+
+        # Draw background image
+        background = pygame.image.load('background.png')
+        background = pygame.transform.scale(background,
+                                            (SCREEN_WIDTH, SCREEN_HEIGHT))  # Scale the image to fit the screen size
+        screen.blit(background, (0, 0))  # Draw the background image
+
         for b in balls:
             pygame.draw.circle(screen, b.color, (int(b.x), int(b.y)), b.radius)
 
             # Radius'ı çiz
-            radius_text = FONT.render(f"r: {b.radius}", True, (255, 255, 255))
+            radius_text = FONT.render(f"R: {b.radius}", True, (255, 255, 255))
             screen.blit(radius_text, (b.x - b.radius // 2, b.y - b.radius // 2))
 
         # CM
@@ -165,6 +198,10 @@ def main():
         text_KE = FONT.render(f"Total KE: {KE_sum:.2f}", True, TEXT_COLOR)
         rect_KE = text_KE.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 30))
         screen.blit(text_KE, rect_KE)
+
+        # Draw holes (orange circles)
+        for hole in HOLES:
+            pygame.draw.circle(screen, HOLE_COLOR, hole["center"], hole["radius"], 2)
 
         pygame.display.flip()
         clock.tick(60)
