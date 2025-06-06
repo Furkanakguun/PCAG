@@ -1,0 +1,65 @@
+Cloth Simulation with Particle Mechanics
+----------------------------------------------------------------
+1. Purpose and Context
+The lecture introduces cloth simulation in 3-D graphics, focusing on the mass–spring (particle) model because it is intuitive and straightforward to implement,
+even if less accurate than continuum-mechanics approaches.
+
+2. Mass–Spring Model Basics
+
+A sheet of cloth is discretised into regularly spaced masses (particles) connected by springs.
+Springs include structural (horizontal/vertical), diagonal (shear-resisting), and bending elements to counter sagging and high curvature.
+Hooke’s Law plus Newton’s 2nd Law govern motion; damping terms can be added for realism/stability.
+Each vertex stores local state (position, velocity, forces) in a mesh that doubles as the render geometry.
+
+3. Force Computation
+
+Net force on a particle: gravity, wind, air resistance, internal spring forces.
+For more realism, mass can be based on triangle areas so the total cloth mass equals area × density.
+Damping springs resist relative velocity; bending springs resist curvature.
+
+4. Energy View & Strain Minimisation
+
+Cloth behaviour can also be framed as minimising elastic strain energy, but computing analytical derivatives over all vertices, edges, and faces is expensive,
+motivating simpler spring formulations.
+
+5. Numerical Integration Choices
+
+Explicit methods (Euler, 4-th-order Runge–Kutta, Verlet) are easy but can explode without small time-steps.
+Implicit methods are unconditionally stable yet slow and complex.
+Symplectic schemes balance speed and long-term energy behaviour but are harder to generalise.
+In practice, Verlet integration is popular for cloth:
+Stores current and previous positions, eliminating explicit velocity storage.
+Fourth-order accurate; inherently stable for small time-steps; easy to add drag by scaling the central “2” coefficient.
+
+6. Particle-System Architecture
+
+A particle structure holds position, previous position, accumulated forces, and flags (locked, follow-mouse).
+Unary forces (gravity, viscous drag) act on individual particles.
+n-ary forces (springs) act on fixed particle pairs or groups.
+Spatial interaction forces (e.g., attraction/repulsion) may act on arbitrary particle pairs.
+A simulation step sequence:
+Clear/accumulate forces for all particles.
+Integrate positions (Verlet).
+Iteratively satisfy constraints (e.g., enforce spring rest lengths).
+
+7. Blender/Python API Parameters
+Demonstrations show how varying mass, tension/compression stiffness, shear stiffness, and bending stiffness influence visual results,
+highlighting trade-offs between sagging and unnatural rigidity.
+
+8. Rigid-Body Physics with PyMunk/Chipmunk (2-D)
+
+PyMunk wraps the Chipmunk C library, offering rigid-body simulation, broad-phase collision detection, numerous joints, sleeping bodies, and collision callbacks.
+Key concepts:
+Bodies store mass, inertia, position, velocity; shapes give collision geometry; constraints/joints link bodies; spaces group everything for stepping.
+Example code illustrates:
+Creating a Space, setting gravity, stepping the sim at 1/50 s.
+Adding dynamic balls with calculated moment of inertia.
+Building static or dynamic L-shaped platforms, pin/slide joints, and rotation limits.
+Periodically removing off-screen bodies to reclaim memory.
+
+9.Integration into Games/Demos
+The lecture emphasises keeping physics step size fixed for stability, tuning gravity to “look right,” and leveraging
+PyMunk’s high-level Pythonic API for rapid experimentation in 2-D games or interactive demos.
+
+10. Practical Exercise
+Students are prompted to implement a Newton’s Cradle using multiple rigid bodies and high-elasticity collision shapes (shape.elasticity = 0.9999999).
