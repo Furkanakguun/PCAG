@@ -7,6 +7,7 @@ CM_COLOR = (255, 0, 0)  # CM artı işareti
 TEXT_COLOR = (255, 150, 0)  # ortadaki momentum sayısı
 HOLE_COLOR = (255, 165, 0)  # Orange color for holes
 FRICTION_COEFFICIENT = 0.9  # Coefficient of friction, similar to restitution for angular collisions
+RESTUTION_COEFFICIENT = 0.9  # Coefficient of friction, similar to restitution for angular collisions
 
 pygame.init()
 FONT = pygame.font.SysFont(None, 28)
@@ -98,14 +99,14 @@ def detect_collision_normal(b1, b2):
     return False, None, None
 
 
-def post_velocities(v1, v2, angle, m1, m2, e=0.9):
+def post_velocities(v1, v2, angle, m1, m2, restitution=RESTUTION_COEFFICIENT):
     v1n = v1[0] * math.cos(angle) + v1[1] * math.sin(angle)
     v1t = -v1[0] * math.sin(angle) + v1[1] * math.cos(angle)
     v2n = v2[0] * math.cos(angle) + v2[1] * math.sin(angle)
     v2t = -v2[0] * math.sin(angle) + v2[1] * math.cos(angle)
 
-    v1n2 = ((m1 - e * m2) * v1n + (1 + e) * m2 * v2n) / (m1 + m2)
-    v2n2 = ((m2 - e * m1) * v2n + (1 + e) * m1 * v1n) / (m1 + m2)
+    v1n2 = ((m1 - restitution * m2) * v1n + (1 + restitution) * m2 * v2n) / (m1 + m2)
+    v2n2 = ((m2 - restitution * m1) * v2n + (1 + restitution) * m1 * v1n) / (m1 + m2)
 
     v1x = v1n2 * math.cos(angle) - v1t * math.sin(angle)
     v1y = v1n2 * math.sin(angle) + v1t * math.cos(angle)
@@ -212,15 +213,6 @@ def main():
 
         for b in balls:
             b.draw(screen)
-
-            # Radius'ı çiz
-            # radius_text = FONT.render(f"R: {b.radius}", True, (255, 255, 255))
-            # screen.blit(radius_text, (b.x - b.radius // 2, b.y - b.radius // 2))
-
-        # CM
-        cx, cy = calculate_cg(balls)
-        pygame.draw.line(screen, CM_COLOR, (cx - 4, cy), (cx + 4, cy), 2)
-        pygame.draw.line(screen, CM_COLOR, (cx, cy - 4), (cx, cy + 4), 2)
 
         # Total scalar momentum
         P_sum = int(calculation_of_momentum(balls))
