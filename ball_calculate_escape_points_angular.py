@@ -1,16 +1,12 @@
 import pygame, random, math
 
-"""
-@author fakgun
-"""
-
-
 # ────────────────────────── Constants ──────────────────────────
 SCREEN_WIDTH, SCREEN_HEIGHT = 800, 600  # Update to match background image size
 BLACK = (0, 0, 0)
 CM_COLOR = (255, 0, 0)  # CM artı işareti
 TEXT_COLOR = (255, 150, 0)  # ortadaki momentum sayısı
 HOLE_COLOR = (255, 165, 0)  # Orange color for holes
+FRICTION_COEFFICIENT = 0.9  # Coefficient of friction, similar to restitution for angular collisions
 
 pygame.init()
 FONT = pygame.font.SysFont(None, 28)
@@ -29,13 +25,43 @@ class Ball:
         self.x = self.y = 0
         self.change_x = random.uniform(-4, 4)
         self.change_y = random.uniform(-4, 4)
-        # kütleyi alanla orantılı yapalım ki sayı büyüsün
+
+        # Calculate mass based on radius
         self.mass = 0.02 * (self.radius ** 2)
-        # Ball color based on radius
+
+        # Now calculate moment of inertia based on mass and radius
+        self.moment_of_inertia = (2 / 5) * self.mass * (self.radius ** 2)
+
+        # Random angular velocity
+        self.angular_velocity = random.uniform(-2, 2)
+
+        # Initialize angle (starting at 0 degrees)
+        self.angle = 0
+
+        # Random color based on radius
         if self.radius > 40:
             self.color = (255, 0, 0)  # Red if radius > 40px
         else:
             self.color = (0, 0, 255)  # Blue if radius <= 40px
+
+    def update_rotation(self, dt):
+        """Updates the rotation of the ball based on angular velocity."""
+        self.angle += self.angular_velocity * dt
+
+    def draw(self, screen):
+        """Draw the ball on the screen, rotating its diameter to show angular motion."""
+        rotated_image = pygame.Surface((self.radius * 2, self.radius * 2), pygame.SRCALPHA)
+        pygame.draw.circle(rotated_image, self.color, (self.radius, self.radius), self.radius)
+        rotated_image = pygame.transform.rotate(rotated_image, math.degrees(self.angle))
+        screen.blit(rotated_image, (self.x - self.radius, self.y - self.radius))
+
+        # Rotate the radius text
+        radius_text = FONT.render(f"R: {self.radius}", True, (255, 255, 255))
+        text_rect = radius_text.get_rect(center=(self.x, self.y))
+        rotated_text = pygame.transform.rotate(radius_text, math.degrees(self.angle))
+        rotated_text_rect = rotated_text.get_rect(center=text_rect.center)
+
+        screen.blit(rotated_text, rotated_text_rect)
 
 
 # ––––– yeni top çakışmasız
@@ -72,14 +98,14 @@ def detect_collision_normal(b1, b2):
     return False, None, None
 
 
-def post_velocities(v1, v2, angle, m1, m2, restitution=0.9):
+def post_velocities(v1, v2, angle, m1, m2, e=0.9):
     v1n = v1[0] * math.cos(angle) + v1[1] * math.sin(angle)
     v1t = -v1[0] * math.sin(angle) + v1[1] * math.cos(angle)
     v2n = v2[0] * math.cos(angle) + v2[1] * math.sin(angle)
     v2t = -v2[0] * math.sin(angle) + v2[1] * math.cos(angle)
 
-    v1n2 = ((m1 - restitution * m2) * v1n + (1 + restitution) * m2 * v2n) / (m1 + m2)
-    v2n2 = ((m2 - restitution * m1) * v2n + (1 + restitution) * m1 * v1n) / (m1 + m2)
+    v1n2 = ((m1 - e * m2) * v1n + (1 + e) * m2 * v2n) / (m1 + m2)
+    v2n2 = ((m2 - e * m1) * v2n + (1 + e) * m1 * v1n) / (m1 + m2)
 
     v1x = v1n2 * math.cos(angle) - v1t * math.sin(angle)
     v1y = v1n2 * math.sin(angle) + v1t * math.cos(angle)
@@ -103,7 +129,9 @@ def calculation_of_kinetic_energy(balls):
     for ball in balls:
         # Kinetik enerji = 0.5 * m * v^2
         v_magnitude = math.hypot(ball.change_x, ball.change_y)  # Hızın büyüklüğü
-        total_ke += 0.5 * ball.mass * v_magnitude ** 2  # Toplam enerji
+        KE_linear = 0.5 * ball.mass * v_magnitude ** 2  # Toplam doğrusal enerji
+        KE_angular = 0.5 * ball.moment_of_inertia * (ball.angular_velocity ** 2)  # Toplam açısal enerji
+        total_ke += KE_linear + KE_angular  # Toplam enerji
     return total_ke
 
 
@@ -149,6 +177,9 @@ def main():
             if check_hole_collision(b):
                 balls.remove(b)  # Remove the ball if it goes completely into the hole
 
+            # Update the ball's rotation (angular velocity)
+            b.update_rotation(1 / 60)  # Update the ball's rotation with small time step
+
         # — Pairwise collisions —
         for i in range(len(balls)):
             for j in range(i + 1, len(balls)):
@@ -166,6 +197,10 @@ def main():
                                         (b2.change_x, b2.change_y),
                                         angle, b1.mass, b2.mass)
 
+                    # Transfer angular velocities based on friction
+                    b1.angular_velocity -= FRICTION_COEFFICIENT * (b1.angular_velocity - b2.angular_velocity)
+                    b2.angular_velocity -= FRICTION_COEFFICIENT * (b2.angular_velocity - b1.angular_velocity)
+
         # — Draw —
         screen.fill(BLACK)
 
@@ -176,11 +211,11 @@ def main():
         screen.blit(background, (0, 0))  # Draw the background image
 
         for b in balls:
-            pygame.draw.circle(screen, b.color, (int(b.x), int(b.y)), b.radius)
+            b.draw(screen)
 
             # Radius'ı çiz
-            radius_text = FONT.render(f"R: {b.radius}", True, (255, 255, 255))
-            screen.blit(radius_text, (b.x - b.radius // 2, b.y - b.radius // 2))
+            # radius_text = FONT.render(f"R: {b.radius}", True, (255, 255, 255))
+            # screen.blit(radius_text, (b.x - b.radius // 2, b.y - b.radius // 2))
 
         # CM
         cx, cy = calculate_cg(balls)
@@ -198,6 +233,12 @@ def main():
         text_KE = FONT.render(f"Total KE: {KE_sum:.2f}", True, TEXT_COLOR)
         rect_KE = text_KE.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 30))
         screen.blit(text_KE, rect_KE)
+
+        # Total angular kinetic energy
+        KE_angular_sum = sum(0.5 * ball.moment_of_inertia * (ball.angular_velocity ** 2) for ball in balls)
+        text_KE_angular = FONT.render(f"Total KE (Angular): {KE_angular_sum:.2f}", True, TEXT_COLOR)
+        rect_KE_angular = text_KE_angular.get_rect(center=(SCREEN_WIDTH // 2, SCREEN_HEIGHT // 2 + 60))
+        screen.blit(text_KE_angular, rect_KE_angular)
 
         # Draw holes (orange circles)
         for hole in HOLES:
