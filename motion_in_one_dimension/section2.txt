@@ -1,0 +1,46 @@
+Motion in One Dimension
+========================
+
+1. Introduction to One-Dimensional Motion
+One-dimensional motion is the simplest form of motion where an object moves along a straight line. This section covers the fundamental concepts of position, velocity, and acceleration in one dimension.
+
+2. Key Concepts
+- Position (x): Location of an object along a line
+- Displacement (Δx): Change in position
+- Velocity (v): Rate of change of position
+- Acceleration (a): Rate of change of velocity
+
+3. Kinematic Equations
+For constant acceleration:
+- v = v₀ + at
+- x = x₀ + v₀t + ½at²
+- v² = v₀² + 2a(x - x₀)
+
+4. Free Fall
+Objects under the influence of gravity alone:
+- Acceleration due to gravity: g = 9.81 m/s²
+- Downward direction is typically negative
+- Air resistance is initially ignored
+
+5. Numerical Integration
+Euler's method for solving differential equations:
+- x(t+Δt) = x(t) + v(t)Δt
+- v(t+Δt) = v(t) + a(t)Δt
+
+6. Data Analysis
+- Reading experimental data from files
+- Calculating velocity and acceleration from position data
+- Plotting graphs to visualize motion
+
+7. Applications in Games
+- Character movement
+- Projectile motion
+- Physics-based animations
+- Collision detection
+
+8. Files in This Section
+- free_fall_object.py: Free fall simulation with plotting
+- ballDropcalc.py: Ball drop calculations
+- distance_time.py: Distance-time analysis
+- ballDropPolyfit.py: Polynomial fitting for ball drop data
+- symbolicDiff.py: Symbolic differentiation examples

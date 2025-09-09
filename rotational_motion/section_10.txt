@@ -1,48 +1,60 @@
-1. Describing a rotating body
-A rigid body’s attitude is fixed by an axis of rotation (a line + its positive direction) and a rotation angle θ.
+Rotational Motion
+=================
 
-Right-hand rule: point your right thumb along the + axis; your curled fingers show the positive sense of θ.
+1. Introduction to Rotational Motion
+Rotational motion involves objects spinning around an axis. This section covers angular kinematics, dynamics, and their applications in game development.
 
-2. Angular kinematics
-Angular velocity ω = dθ/dt (radians · s⁻¹).
+2. Angular Kinematics
+- Angular position (θ): Angle of rotation
+- Angular velocity (ω): Rate of change of angle
+- Angular acceleration (α): Rate of change of angular velocity
+- Relationship to linear motion: v = rω, a = rα
 
-Angular acceleration α = dω/dt.
+3. Moment of Inertia
+The rotational equivalent of mass:
+- I = Σ m_i * r_i²
+- Depends on mass distribution around axis
+- Parallel axis theorem: I = I_cm + Md²
 
-A point at distance R from the axis has linear speed v = R ω – coffee mug on a turn-table moves slower near the centre than near the rim.
+4. Torque and Angular Momentum
+- Torque (τ): τ = r × F
+- Angular momentum (L): L = Iω
+- Newton's second law for rotation: τ = Iα
+- Conservation of angular momentum
 
-3. Moment of inertia (rotational inertia)
-The rotational analogue of mass: I = Σ m r². Mass farther from the axis → larger I → harder to spin.
+5. Energy in Rotational Motion
+- Rotational kinetic energy: K = ½Iω²
+- Total kinetic energy: K = ½mv² + ½Iω²
+- Work-energy theorem for rotation
+- Power in rotational motion
 
-The slides list closed-form I for rods, disks, spheres, …
+6. Rolling Motion
+- Rolling without slipping: v = rω
+- Kinetic energy of rolling objects
+- Friction in rolling motion
+- Rolling resistance
 
-Parallel-axis theorem: I_O = I_cm + M s² (shift the axis by s from the centre of mass).
+7. Gyroscopic Motion
+- Precession
+- Nutation
+- Gyroscopic stability
+- Applications in navigation and control
 
-4. Newton’s rotational law
+8. Numerical Integration for Rotation
+- Euler's method for angular motion
+- Verlet integration for stability
+- Quaternion representation for 3D rotation
+- Avoiding gimbal lock
 
-Torque τ = r × F. A door opens easier when you push at the handle (larger r → larger τ).
+9. Applications in Games
+- Spinning objects and projectiles
+- Vehicle dynamics
+- Character animation
+- Physics-based puzzles
+- Sports simulations
 
-5. Energy split
-A skateboarder translating (V) and flipping (ω) owns both terms.
-
-6. Fixed vs. moving axes
-Fixed axis: ceiling fan.
-
-Moving axis: a baton in mid-air – the CM follows a parabola while the baton spins. With no external torque, ω stays constant.
-
-7. Numerical integration (Euler)
-omega += alpha*dt      # angular speed
-theta += omega*dt      # angle
-v     += a*dt          # CM velocity
-r     += v*dt          # CM position
-Ground contact modelled as a spring adds forces and torques.
-
-8. Rotating sprites in Pygame
-pygame.transform.rotate is quick but aliasing-prone.
-
-The slides show a custom rot_center() helper that rotates an image and re-draws it at the same centre; each mouse click adds +3°.
-
-9. Where you apply the force matters
-Force through the CM → pure translation.
-
-Offset force → translation and rotation. Hit a hammer at the handle: it flies forward and spins.
-
+10. Files in This Section
+- torque.py: Torque calculations and examples
+- torque1.py: Advanced torque problems
+- rotPolygon.py: Rotating polygon simulation
+- spritePygame.py: Rotating sprites in Pygame

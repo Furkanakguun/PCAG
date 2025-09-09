@@ -1,0 +1,67 @@
+Forces in One and Two Dimensions
+=================================
+
+1. Introduction to Forces
+Forces are the cause of changes in motion. This section covers the fundamental principles of force, Newton's laws of motion, and their applications in one and two dimensions.
+
+2. Newton's Laws of Motion
+First Law (Law of Inertia): An object at rest stays at rest, and an object in motion stays in motion, unless acted upon by an external force.
+
+Second Law: F = ma (Force equals mass times acceleration)
+
+Third Law: For every action, there is an equal and opposite reaction.
+
+3. Types of Forces
+- Gravitational force: F = mg
+- Normal force: Perpendicular to contact surface
+- Friction force: F = μN (static and kinetic)
+- Spring force: F = -kx (Hooke's law)
+- Air resistance: F = -bv (proportional to velocity)
+
+4. Force Diagrams (Free Body Diagrams)
+- Identify all forces acting on an object
+- Draw vectors representing each force
+- Choose coordinate system
+- Apply Newton's second law
+
+5. Two-Dimensional Force Analysis
+- Resolve forces into components
+- Apply Newton's second law in x and y directions
+- Solve system of equations
+- Calculate acceleration and motion
+
+6. Numerical Integration Methods
+Euler's Method:
+- x(t+Δt) = x(t) + v(t)Δt
+- v(t+Δt) = v(t) + a(t)Δt
+
+Runge-Kutta Methods:
+- More accurate than Euler's method
+- RK4 is commonly used for physics simulations
+
+7. Boundary Conditions
+- Collision with walls
+- Elastic and inelastic collisions
+- Energy conservation
+- Momentum conservation
+
+8. Air Resistance and Drag
+- Linear drag: F = -bv
+- Quadratic drag: F = -bv²
+- Terminal velocity
+- Reynolds number considerations
+
+9. Applications in Games
+- Character movement and jumping
+- Vehicle physics
+- Ballistics and projectiles
+- Particle systems
+
+10. Files in This Section
+- euler.py: Euler integration method
+- bounceBallairdrag.py: Ball bouncing with air resistance
+- boundry_fsolve.py: Boundary condition solving
+- boundry_ivp.py: Initial value problems
+- boundry_ivp_fsolve.py: Combined boundary and IVP solving
+- move_circle_with_game_controller.py: Game controller input
+- fps_test.py: Frame rate testing

@@ -1,0 +1,55 @@
+Multi-Particle Systems
+======================
+
+1. Introduction to Multi-Particle Systems
+Multi-particle systems involve the study of many interacting particles, each with their own position, velocity, and properties. These systems are fundamental to understanding complex physical phenomena.
+
+2. Center of Mass
+The center of mass is the average position of all particles weighted by their masses:
+- R_cm = (Σ m_i * r_i) / Σ m_i
+- Motion of center of mass follows Newton's second law
+- Internal forces cancel out in center of mass calculations
+
+3. Particle Interactions
+- Gravitational forces between particles
+- Spring forces between connected particles
+- Collision forces
+- Electromagnetic forces (in advanced simulations)
+
+4. Numerical Methods for Multi-Particle Systems
+- Verlet integration for stability
+- Leap-frog method
+- Symplectic integrators for energy conservation
+- Barnes-Hut algorithm for efficient N-body calculations
+
+5. Collision Detection and Response
+- Broad phase: Spatial partitioning
+- Narrow phase: Precise collision detection
+- Response: Impulse-based collision resolution
+- Contact forces and friction
+
+6. Constraint Systems
+- Distance constraints between particles
+- Angle constraints
+- Collision constraints
+- Soft constraints vs. hard constraints
+
+7. Performance Optimization
+- Spatial data structures (quadtrees, octrees)
+- Level of detail (LOD) systems
+- Parallel processing
+- GPU acceleration
+
+8. Applications
+- Cloth simulation
+- Fluid simulation
+- Granular materials
+- Molecular dynamics
+- Crowd simulation
+- Flocking behavior
+
+9. Files in This Section
+- dumbell.py: Dumbell system simulation
+- dumbellPyGame.py: Interactive dumbell with Pygame
+- imageCG.py: Center of gravity calculations for images
+- imageCG.py: Character graphics and center of mass
